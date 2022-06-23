@@ -1,7 +1,9 @@
 package edu.val.vistasrecicladas;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 
@@ -20,8 +22,16 @@ public class MainActivity extends AppCompatActivity {
 
         this.recyclerView = findViewById(R.id.recicler_view);
         List<Libro> libroList = generarListaLibros();
+
         AdapterListaLibros adapterListaLibros = new AdapterListaLibros(libroList);
+
         this.recyclerView.setAdapter(adapterListaLibros);//oye, lista (recycler), tu proveedor, es éste (adapter)
+
+        //ahora definimos el estilo
+        RecyclerView.LayoutManager layoutManager =  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+         this.recyclerView.setLayoutManager(layoutManager);
+
+         //echad un vistazo al  StaggeredGridLayoutManager para distrbucion en celdas
     }
 
 
