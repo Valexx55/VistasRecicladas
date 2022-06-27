@@ -25,4 +25,12 @@ public class Libro {
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
+
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "imagen=" + imagen +
+                ", titulo='" + titulo + '\'' +
+                '}';
+    }
 }

@@ -63,8 +63,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private List<Libro> filtrarLista (List<Libro> lista_libros, String busqueda_usuario)
     {
         List<Libro> lista_libros_filtrada = null;
-
+            //TODO: implementar esta función para que cumpla con la funcionalidad prevista
+        //tiempo: 15 minutos
             //recorrer con un for
+        lista_libros_filtrada = new ArrayList<Libro>();
+        for(int i = 0; i<lista_libros.size(); i++){
+            //if (busqueda_usuario.equals(lista_libros.get(i).getTitulo()))
+            if (lista_libros.get(i).getTitulo().contains(busqueda_usuario))
+            {
+                lista_libros_filtrada.add(lista_libros.get(i));
+            }
+        }
+
                 //si la busqueda de usuario, coincide con el elemento de la lista
                     //a la buchaca, lo meto en la nueva lista
                //si no --> no hago nada
@@ -77,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //método invocado al realizar la búsqueda
         Log.d("ETIQUETA_LOG", "onQueryTextSubmit = " + termino_busqueda);
         //FILTRAR POR LA CADENA DE BÚSQUEDA S
+        Log.d("ETIQUETA_LOG", "lista sin filtrar = " + this.libroList);
+        List<Libro> lista_filtrada = filtrarLista(this.libroList, termino_busqueda);
+        Log.d("ETIQUETA_LOG", "lista_filtrada = " + lista_filtrada);
+        //TODO Actualizar el Recycler
         return true;
     }
 
