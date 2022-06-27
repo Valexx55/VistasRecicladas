@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         this.searchView = findViewById(R.id.searchView);
         this.recyclerView = findViewById(R.id.recicler_view);
         libroList = generarListaLibros();
+
+        Log.d("ETIQUETA_LOG", "lista sin ordenar = " + this.libroList);
+        //Collections.sort(libroList);
+        //Log.d("ETIQUETA_LOG", "lista ordenada por id orden natural = " + this.libroList);
+        //Collections.sort(libroList, new ComparadorLibros());
+        //Log.d("ETIQUETA_LOG", "lista ordenada por titulo orden total = " + this.libroList);
+
 
         adapterListaLibros = new AdapterListaLibros(libroList);
 
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             for (int i = 0; i < TAMANIO_LISTA_LIBROS; i++)
             {
-                libro_aux = new Libro(R.mipmap.ic_launcher, "TITULO "+i);
+                libro_aux = new Libro(i, R.mipmap.ic_launcher, "TITULO "+i);
                 lista_libros.add(libro_aux);
             }
 
@@ -136,5 +145,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             this.recyclerView.setAdapter(this.adapterListaLibros);
         }
         return true;
+    }
+
+    public void ordenarPorTitulo(View view) {
+
+        Log.d("ETIQUETA_LOG", "ORDEN ordenarPorTitulo");
+        Collections.sort(this.libroList, new ComparadorLibros());
+        this.adapterListaLibros = new AdapterListaLibros(this.libroList);
+        this.recyclerView.setAdapter(this.adapterListaLibros);
+    }
+
+    public void ordenarPorId(View view) {
+        Log.d("ETIQUETA_LOG", "ORDEN ordenarPorId");
+        Collections.sort(this.libroList);
+        this.adapterListaLibros = new AdapterListaLibros(this.libroList);
+        this.recyclerView.setAdapter(this.adapterListaLibros);
     }
 }
