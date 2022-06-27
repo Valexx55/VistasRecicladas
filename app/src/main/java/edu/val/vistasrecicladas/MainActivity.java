@@ -1,16 +1,20 @@
 package edu.val.vistasrecicladas;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -18,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private static final int TAMANIO_LISTA_LIBROS = 100;
     private SearchView searchView;
     private List<Libro> libroList;
+    private AdapterListaLibros adapterListaLibros;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,17 +33,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         this.recyclerView = findViewById(R.id.recicler_view);
         libroList = generarListaLibros();
 
-        AdapterListaLibros adapterListaLibros = new AdapterListaLibros(libroList);
+        adapterListaLibros = new AdapterListaLibros(libroList);
 
         this.recyclerView.setAdapter(adapterListaLibros);//oye, lista (recycler), tu proveedor, es éste (adapter)
 
         //ahora definimos el estilo
         RecyclerView.LayoutManager layoutManager =  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-         //this.recyclerView.setLayoutManager(layoutManager);
-        this.recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        this.recyclerView.setLayoutManager(layoutManager);
+        //this.recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
          //echad un vistazo al  StaggeredGridLayoutManager para distrbucion en celdas
         this.searchView.setOnQueryTextListener(this);
+
+
     }
 
 
@@ -82,6 +89,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return lista_libros_filtrada;
     }
 
+    //ALERNATIVA A FILTRADO CON PROGRAMACIÓN FUNCIONAL (STREAMS Y LAMBDAS, FUNCIONES ANÓNIMAS)
+    private List<Libro> filtrarLista2 (List<Libro> lista_libros, String busqueda_usuario)
+    {
+        List<Libro> lista_libros_filtrada = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            lista_libros_filtrada = lista_libros.stream().filter(libro -> {return libro.getTitulo().contains(busqueda_usuario);}).collect(Collectors.toList());
+        }
+
+        return lista_libros_filtrada;
+    }
+
     @Override
     public boolean onQueryTextSubmit(String termino_busqueda) {
         //método invocado al realizar la búsqueda
@@ -89,15 +108,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //FILTRAR POR LA CADENA DE BÚSQUEDA S
         Log.d("ETIQUETA_LOG", "lista sin filtrar = " + this.libroList);
         List<Libro> lista_filtrada = filtrarLista(this.libroList, termino_busqueda);
+        List<Libro> lista_filtrada2 = filtrarLista2(this.libroList, termino_busqueda);
         Log.d("ETIQUETA_LOG", "lista_filtrada = " + lista_filtrada);
-        //TODO Actualizar el Recycler
+        Log.d("ETIQUETA_LOG", "lista_filtrada2 = " + lista_filtrada2);
+        //TODO Actualizar el Recycler --> CREANDO UN NUEVO ADAPTER CON LOS DATOS NUEVOS
+        this.adapterListaLibros = new AdapterListaLibros(lista_filtrada);
+        this.recyclerView.setAdapter(this.adapterListaLibros);//al asginarle al recycler un nuevo adapter, fuerzo su actualización
+
         return true;
     }
 
+
+
     @Override
-    public boolean onQueryTextChange(String s) {
+    public boolean onQueryTextChange(String termino_busqueda) {
         //método invocado al modficar el contenido de la caja de búsqueda
-        Log.d("ETIQUETA_LOG", "onQueryTextChange = " + s);
+        Log.d("ETIQUETA_LOG", "onQueryTextChange = " + termino_busqueda);
+        if (termino_busqueda.equals(""))
+        {
+            //TODO recuperar la lista original
+           // this.libroList = this.generarListaLibros();
+            this.adapterListaLibros = new AdapterListaLibros(libroList);
+            this.recyclerView.setAdapter(adapterListaLibros);
+        } else {
+            List<Libro> lista_filtrada = filtrarLista(this.libroList, termino_busqueda);
+            this.adapterListaLibros = new AdapterListaLibros(lista_filtrada);
+            this.recyclerView.setAdapter(this.adapterListaLibros);
+        }
         return true;
     }
 }
