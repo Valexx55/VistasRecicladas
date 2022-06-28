@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                //TODO intentar pintar al fondo una imagen/color de fondo
+                //recycler, poner algo al fondo en esa posición
+
+
                 Log.d("ETIQUETA_LOG", "onSwiped direction = " + direction);
                 int posicion_delizada = viewHolder.getAdapterPosition();
                 Log.d("ETIQUETA_LOG", "posicion_delizada = " + posicion_delizada);
