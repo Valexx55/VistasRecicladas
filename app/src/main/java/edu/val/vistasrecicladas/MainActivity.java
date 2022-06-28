@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private RecyclerView recyclerView;//es el padre de la lista de datos - el contendor
-    private static final int TAMANIO_LISTA_LIBROS = 100;
+    private static final int TAMANIO_LISTA_LIBROS = 10;//100;
     private SearchView searchView;
     private List<Libro> libroList;
     private AdapterListaLibros adapterListaLibros;
@@ -53,6 +53,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
          //echad un vistazo al  StaggeredGridLayoutManager para distrbucion en celdas
         this.searchView.setOnQueryTextListener(this);
+
+        //en este objeto vamos a definir las funciones / la respuesta los eventos
+        //defino que sólo voy "a estar atento", a responder" a los deslizammientos a la derecha
+        //si pongo 0 en el primer parámetro, ignoro los movimientos de arrastre
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+               /* int posicion_vh = viewHolder.getAdapterPosition();
+                int posicion_target = target.getAdapterPosition();*/
+                adapterListaLibros.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+
+                //Log.d("ETIQUETA_LOG", "onMove pos origen =" + posicion_vh + " pos destino = " +posicion_target );
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("ETIQUETA_LOG", "onSwiped direction = " + direction);
+                int posicion_delizada = viewHolder.getAdapterPosition();
+                Log.d("ETIQUETA_LOG", "posicion_delizada = " + posicion_delizada);
+                adapterListaLibros.notifyItemRemoved(posicion_delizada);
+                Log.d("ETIQUETA_LOG", "eliminada posición = " + posicion_delizada);
+                Log.d("ETIQUETA_LOG", "Lista = " + libroList);
+                libroList.remove(posicion_delizada);
+
+
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        //lo asociamos a lista, para que cuando toquen algún elemento, se invoquen las funciones previstas
+        itemTouchHelper.attachToRecyclerView(this.recyclerView);
 
 
     }
